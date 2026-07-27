@@ -113,7 +113,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             items: [
               { title: t("stats"), url: `${base}/admin/stats` },
               { title: t("moderation"), url: `${base}/admin/moderation` },
+              { title: t("universityCategories"), url: `${base}/admin/university-categories` },
+              { title: t("universities"), url: `${base}/admin/universities` },
+              { title: t("faculties"), url: `${base}/admin/faculties` },
+              { title: t("degreeLevels"), url: `${base}/admin/degree-levels` },
               { title: t("taxonomy"), url: `${base}/admin/taxonomy` },
+              { title: t("professorsAdmin"), url: `${base}/admin/professors` },
+              { title: t("bots"), url: `${base}/admin/bots` },
               { title: t("users"), url: `${base}/admin/users` },
               { title: t("settings"), url: `${base}/admin/settings` },
               { title: t("broadcast"), url: `${base}/admin/broadcast` },

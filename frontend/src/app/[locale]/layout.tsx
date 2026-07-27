@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
-import { Vazirmatn } from "next/font/google";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
@@ -10,18 +8,6 @@ import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { getDirection, isLocale, locales, type Locale } from "@/i18n/config";
 import "../globals.css";
-
-const geistSans = localFont({
-  src: "../fonts/GeistVF.woff",
-  variable: "--font-geist",
-  weight: "100 900",
-});
-
-const vazirmatn = Vazirmatn({
-  subsets: ["arabic"],
-  variable: "--font-vazirmatn",
-  weight: ["400", "500", "600", "700"],
-});
 
 export const metadata: Metadata = {
   title: "OstadBank",
@@ -47,13 +33,8 @@ export default async function LocaleLayout({
   const dir = getDirection(locale);
 
   return (
-    <html lang={locale} dir={dir} suppressHydrationWarning className={cn(geistSans.variable, vazirmatn.variable)}>
-      <body
-        className={cn(
-          "min-h-svh bg-background text-foreground antialiased",
-          locale === "fa" ? "font-[family-name:var(--font-vazirmatn)]" : "font-[family-name:var(--font-geist)]",
-        )}
-      >
+    <html lang={locale} dir={dir} suppressHydrationWarning>
+      <body className={cn("min-h-svh bg-background text-foreground font-sans antialiased")}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <NextIntlClientProvider messages={messages}>
             <TooltipProvider>

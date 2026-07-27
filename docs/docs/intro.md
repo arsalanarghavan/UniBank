@@ -31,13 +31,23 @@ Roles: `student`, `admin`, `owner`.
 - `GET /api/v1/auth/me`
 
 ### Student / public
+- `GET /api/v1/university-categories`
+- `GET /api/v1/universities`
+- `GET /api/v1/faculties`
+- `GET /api/v1/degree-levels`
 - `GET /api/v1/fields`
 - `GET /api/v1/professors`
 - `GET /api/v1/search?q=`
 - `GET /api/v1/rankings`
 - `GET /api/v1/rules`
 - `GET|POST /api/v1/experiences`
+- `POST /api/v1/experiences/{id}/attachments`
 - `GET|PUT|DELETE /api/v1/experiences/{id}`
+
+### Admin domain
+- CRUD university categories / universities / faculties / degree levels
+- Faculty-scoped taxonomy + professor links & teaching assignments
+- Per-university Telegram/Bale bots + UI Studio / force-join / texts
 
 ### Admin (`role:admin|owner`)
 - `GET /api/v1/admin/stats`

@@ -81,4 +81,38 @@ export async function apiMutate<T = unknown>(
   });
 }
 
+export async function apiUpload<T = unknown>(
+  path: string,
+  formData: FormData,
+): Promise<T> {
+  await ensureCsrfCookie();
+  const headers = new Headers();
+  headers.set("Accept", "application/json");
+  headers.set("X-Requested-With", "XMLHttpRequest");
+  const xsrf = getXsrfToken();
+  if (xsrf) headers.set("X-XSRF-TOKEN", xsrf);
+  if (typeof window !== "undefined") {
+    const token = window.localStorage.getItem("ostadbank_token");
+    if (token) headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  const response = await fetch(`${API_URL}${path}`, {
+    method: "POST",
+    headers,
+    body: formData,
+    credentials: "include",
+    cache: "no-store",
+  });
+
+  const data = await parseJson(response);
+  if (!response.ok) {
+    const error = new Error(
+      data.message || data.error || `Request failed (${response.status})`,
+    ) as Error & ApiError;
+    error.errors = data.errors;
+    throw error;
+  }
+  return data as T;
+}
+
 export { API_URL };
