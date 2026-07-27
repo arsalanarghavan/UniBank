@@ -1,6 +1,8 @@
 # OstadBank
 
-Professor Archive platform — Laravel 13 API, Next.js 14.2.35 + official shadcn/ui, Docusaurus docs, and Telegram bot module.
+Professor Archive platform — Laravel 13 API, Next.js 14.2.35 + official shadcn/ui, Docusaurus docs, and Telegram/Bale bot module.
+
+Repository: [github.com/arsalanarghavan/UniBank](https://github.com/arsalanarghavan/UniBank)
 
 ## Architecture
 
@@ -12,12 +14,41 @@ Professor Archive platform — Laravel 13 API, Next.js 14.2.35 + official shadcn
 | MariaDB | Docker | 3306 |
 | Redis | Docker | 6379 |
 
-## Quick start
+## aaPanel one-line install
+
+Requires Docker + Compose on the server (aaPanel → App Store → Docker).
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/arsalanarghavan/UniBank/main/aapanel-install.sh | bash
+```
+
+With domain (sets `web` / `api.` / `docs.` HTTPS URLs + Sanctum/CORS):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/arsalanarghavan/UniBank/main/aapanel-install.sh | bash -s -- --domain example.com
+```
+
+Custom install path:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/arsalanarghavan/UniBank/main/aapanel-install.sh | bash -s -- --dir /www/dk_project/UniBank --domain example.com
+```
+
+Optional: also install Docker Engine if missing:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/arsalanarghavan/UniBank/main/aapanel-install.sh | bash -s -- --install-docker --domain example.com
+```
+
+Default install directory: `/www/dk_project/UniBank`
+
+## Quick start (local / existing checkout)
 
 ```bash
 cp .env.example .env
-cp backend/.env.example backend/.env   # or use the generated backend/.env
-docker compose up -d --build
+cp backend/.env.example backend/.env
+./install.sh
+# or: docker compose up -d --build
 ```
 
 Default owner (seeded):
@@ -53,7 +84,8 @@ php artisan schedule:work
 
 API base: `/api/v1`  
 OpenAPI (Scramble): `/docs/api`  
-Telegram webhook: `POST /api/telegram/webhook`
+Telegram legacy webhook: `POST /api/telegram/webhook`  
+Per-bot webhook: `POST /api/bots/{id}/webhook`
 
 ### Legacy import
 
