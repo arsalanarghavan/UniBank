@@ -1,0 +1,46 @@
+# Dependencies
+/node_modules
+/vendor
+/.pnp
+.pnp.js
+
+# Build
+/.next/
+/out/
+/build
+/dist
+/backend/public/build
+/docs/build
+/docs/.docusaurus
+
+# Env
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env.local
+
+# IDE / OS
+.DS_Store
+.idea
+.vscode
+*.log
+npm-debug.log*
+
+# Laravel
+backend/storage/*.key
+backend/storage/logs/*
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/bootstrap/cache/*.php
+!backend/bootstrap/cache/.gitignore
+!backend/storage/logs/.gitignore
+
+# Testing
+/coverage
+.phpunit.result.cache
+
+# Misc
+*.sql
+*.sqlite

@@ -1,74 +1,171 @@
 services:
   traefik:
-    image: "traefik:v2.10"
-    container_name: "traefik"
-    restart: always
+    image: traefik:v2.10
+    container_name: ostadbank_traefik
+    restart: unless-stopped
     command:
-      - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.dnschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=cloudflare"
-      - "--certificatesresolvers.myresolver.acme.email=${LETSENCRYPT_EMAIL}"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--api.insecure=true"
     ports:
       - "80:80"
       - "443:443"
-    environment:
-      - "CLOUDFLARE_DNS_API_TOKEN=${CLOUDFLARE_API_TOKEN}"
+      - "8080:8080"
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "letsencrypt_data:/letsencrypt"
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - ostadbank_net
-
-  app:
-    build: .
-    container_name: ostadbank_bot
-    restart: always
-    env_file:
-      - .env
-    depends_on:
-      db:
-        condition: service_healthy
-    entrypoint: ["/app/entrypoint.sh"]
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.ostadbank.rule=Host(`${DOMAIN_NAME}`)"
-      - "traefik.http.routers.ostadbank.entrypoints=websecure"
-      - "traefik.http.routers.ostadbank.tls.certresolver=myresolver"
-      - "traefik.http.services.ostadbank.loadbalancer.server.port=8000"
-      - "traefik.docker.network=ostadbank_net"
-    networks:
-      - ostadbank_net
+    profiles: ["prod"]
 
   db:
     image: mariadb:10.11
     container_name: ostadbank_db
-    restart: always
+    restart: unless-stopped
     command:
       - "--character-set-server=utf8mb4"
       - "--collation-server=utf8mb4_unicode_ci"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootsecret}
+      MYSQL_DATABASE: ${DB_DATABASE:-ostadbank}
+      MYSQL_USER: ${DB_USERNAME:-ostadbank}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
       timeout: 5s
-      retries: 5
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - "mariadb_data:/var/lib/mysql"
+      retries: 10
     networks:
       - ostadbank_net
 
+  redis:
+    image: redis:7-alpine
+    container_name: ostadbank_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - ostadbank_net
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ostadbank_api
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      APP_URL: ${API_URL:-http://localhost:8000}
+      DB_HOST: db
+      REDIS_HOST: redis
+      SANCTUM_STATEFUL_DOMAINS: ${SANCTUM_STATEFUL_DOMAINS:-localhost:3000,localhost}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/var/www/html
+    networks:
+      - ostadbank_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`${API_HOST:-api.localhost}`)"
+      - "traefik.http.services.api.loadbalancer.server.port=80"
+
+  queue:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ostadbank_queue
+    restart: unless-stopped
+    command: php artisan queue:work --sleep=1 --tries=3 --max-time=3600
+    env_file:
+      - ./backend/.env
+    environment:
+      DB_HOST: db
+      REDIS_HOST: redis
+    depends_on:
+      - api
+      - redis
+    volumes:
+      - ./backend:/var/www/html
+    networks:
+      - ostadbank_net
+
+  scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ostadbank_scheduler
+    restart: unless-stopped
+    command: php artisan schedule:work
+    env_file:
+      - ./backend/.env
+    environment:
+      DB_HOST: db
+      REDIS_HOST: redis
+    depends_on:
+      - api
+    volumes:
+      - ./backend:/var/www/html
+    networks:
+      - ostadbank_net
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ostadbank_web
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      API_INTERNAL_URL: ${API_INTERNAL_URL:-http://api}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - ostadbank_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.web.rule=Host(`${WEB_HOST:-localhost}`)"
+      - "traefik.http.services.web.loadbalancer.server.port=3000"
+
+  docs:
+    build:
+      context: ./docs
+      dockerfile: Dockerfile
+    container_name: ostadbank_docs
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./docs:/app
+      - /app/node_modules
+    networks:
+      - ostadbank_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.docs.rule=Host(`${DOCS_HOST:-docs.localhost}`)"
+      - "traefik.http.services.docs.loadbalancer.server.port=3000"
+
 volumes:
   mariadb_data:
-  letsencrypt_data:
 
 networks:
   ostadbank_net:
