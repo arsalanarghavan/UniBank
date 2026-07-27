@@ -1,0 +1,11 @@
+{
+    "name": "Admin",
+    "alias": "admin",
+    "description": "OstadBank Admin module",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Admin\\Providers\\AdminServiceProvider"
+    ],
+    "files": []
+}

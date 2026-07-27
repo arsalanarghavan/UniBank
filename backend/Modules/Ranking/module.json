@@ -1,0 +1,11 @@
+{
+    "name": "Ranking",
+    "alias": "ranking",
+    "description": "OstadBank Ranking module",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Ranking\\Providers\\RankingServiceProvider"
+    ],
+    "files": []
+}

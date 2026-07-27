@@ -1,0 +1,16 @@
+{
+  "name": "modules/telegram",
+  "description": "OstadBank Telegram module",
+  "autoload": {
+    "psr-4": {
+      "Modules\\Telegram\\": "app/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Modules\\Telegram\\Providers\\TelegramServiceProvider"
+      ]
+    }
+  }
+}

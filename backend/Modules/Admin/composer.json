@@ -1,0 +1,16 @@
+{
+  "name": "modules/admin",
+  "description": "OstadBank Admin module",
+  "autoload": {
+    "psr-4": {
+      "Modules\\Admin\\": "app/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Modules\\Admin\\Providers\\AdminServiceProvider"
+      ]
+    }
+  }
+}

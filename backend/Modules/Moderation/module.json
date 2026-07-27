@@ -1,0 +1,11 @@
+{
+    "name": "Moderation",
+    "alias": "moderation",
+    "description": "OstadBank Moderation module",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Moderation\\Providers\\ModerationServiceProvider"
+    ],
+    "files": []
+}

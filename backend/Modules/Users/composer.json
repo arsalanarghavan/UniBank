@@ -1,0 +1,16 @@
+{
+  "name": "modules/users",
+  "description": "OstadBank Users module",
+  "autoload": {
+    "psr-4": {
+      "Modules\\Users\\": "app/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Modules\\Users\\Providers\\UsersServiceProvider"
+      ]
+    }
+  }
+}

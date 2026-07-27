@@ -1,0 +1,16 @@
+{
+  "name": "modules/ranking",
+  "description": "OstadBank Ranking module",
+  "autoload": {
+    "psr-4": {
+      "Modules\\Ranking\\": "app/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Modules\\Ranking\\Providers\\RankingServiceProvider"
+      ]
+    }
+  }
+}

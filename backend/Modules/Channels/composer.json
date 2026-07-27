@@ -1,0 +1,16 @@
+{
+  "name": "modules/channels",
+  "description": "OstadBank Channels module",
+  "autoload": {
+    "psr-4": {
+      "Modules\\Channels\\": "app/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Modules\\Channels\\Providers\\ChannelsServiceProvider"
+      ]
+    }
+  }
+}

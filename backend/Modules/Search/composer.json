@@ -1,0 +1,16 @@
+{
+  "name": "modules/search",
+  "description": "OstadBank Search module",
+  "autoload": {
+    "psr-4": {
+      "Modules\\Search\\": "app/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Modules\\Search\\Providers\\SearchServiceProvider"
+      ]
+    }
+  }
+}

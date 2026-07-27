@@ -1,0 +1,16 @@
+{
+  "name": "modules/auth",
+  "description": "OstadBank Auth module",
+  "autoload": {
+    "psr-4": {
+      "Modules\\Auth\\": "app/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Modules\\Auth\\Providers\\AuthServiceProvider"
+      ]
+    }
+  }
+}

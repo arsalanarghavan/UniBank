@@ -1,0 +1,11 @@
+{
+    "name": "Experiences",
+    "alias": "experiences",
+    "description": "OstadBank Experiences module",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Experiences\\Providers\\ExperiencesServiceProvider"
+    ],
+    "files": []
+}

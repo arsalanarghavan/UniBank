@@ -1,0 +1,16 @@
+{
+  "name": "modules/moderation",
+  "description": "OstadBank Moderation module",
+  "autoload": {
+    "psr-4": {
+      "Modules\\Moderation\\": "app/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Modules\\Moderation\\Providers\\ModerationServiceProvider"
+      ]
+    }
+  }
+}

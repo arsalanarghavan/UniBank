@@ -1,0 +1,16 @@
+{
+  "name": "modules/taxonomy",
+  "description": "OstadBank Taxonomy module",
+  "autoload": {
+    "psr-4": {
+      "Modules\\Taxonomy\\": "app/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Modules\\Taxonomy\\Providers\\TaxonomyServiceProvider"
+      ]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "modules/settings",
+  "description": "OstadBank Settings module",
+  "autoload": {
+    "psr-4": {
+      "Modules\\Settings\\": "app/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Modules\\Settings\\Providers\\SettingsServiceProvider"
+      ]
+    }
+  }
+}

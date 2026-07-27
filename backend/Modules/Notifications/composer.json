@@ -1,0 +1,16 @@
+{
+  "name": "modules/notifications",
+  "description": "OstadBank Notifications module",
+  "autoload": {
+    "psr-4": {
+      "Modules\\Notifications\\": "app/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Modules\\Notifications\\Providers\\NotificationsServiceProvider"
+      ]
+    }
+  }
+}

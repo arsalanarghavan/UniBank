@@ -1,0 +1,16 @@
+{
+  "name": "modules/experiences",
+  "description": "OstadBank Experiences module",
+  "autoload": {
+    "psr-4": {
+      "Modules\\Experiences\\": "app/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Modules\\Experiences\\Providers\\ExperiencesServiceProvider"
+      ]
+    }
+  }
+}

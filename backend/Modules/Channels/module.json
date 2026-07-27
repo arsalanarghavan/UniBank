@@ -1,0 +1,11 @@
+{
+    "name": "Channels",
+    "alias": "channels",
+    "description": "OstadBank Channels module",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Channels\\Providers\\ChannelsServiceProvider"
+    ],
+    "files": []
+}

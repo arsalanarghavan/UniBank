@@ -1,0 +1,11 @@
+{
+    "name": "Telegram",
+    "alias": "telegram",
+    "description": "OstadBank Telegram module",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Telegram\\Providers\\TelegramServiceProvider"
+    ],
+    "files": []
+}

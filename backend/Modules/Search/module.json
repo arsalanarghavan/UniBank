@@ -1,0 +1,11 @@
+{
+    "name": "Search",
+    "alias": "search",
+    "description": "OstadBank Search module",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Search\\Providers\\SearchServiceProvider"
+    ],
+    "files": []
+}

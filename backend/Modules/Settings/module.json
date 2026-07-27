@@ -1,0 +1,11 @@
+{
+    "name": "Settings",
+    "alias": "settings",
+    "description": "OstadBank Settings module",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Settings\\Providers\\SettingsServiceProvider"
+    ],
+    "files": []
+}

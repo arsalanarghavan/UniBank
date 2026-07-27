@@ -1,0 +1,11 @@
+{
+    "name": "Taxonomy",
+    "alias": "taxonomy",
+    "description": "OstadBank Taxonomy module",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Taxonomy\\Providers\\TaxonomyServiceProvider"
+    ],
+    "files": []
+}

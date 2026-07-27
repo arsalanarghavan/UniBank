@@ -1,0 +1,13 @@
+{
+    "Telegram": true,
+    "Auth": true,
+    "Taxonomy": true,
+    "Experiences": true,
+    "Moderation": true,
+    "Ranking": true,
+    "Search": true,
+    "Admin": true,
+    "Settings": true,
+    "Channels": true,
+    "Notifications": true
+}
