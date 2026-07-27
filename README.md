@@ -14,6 +14,12 @@ Repository: [github.com/arsalanarghavan/UniBank](https://github.com/arsalanargha
 | MariaDB | Docker | 3306 |
 | Redis | Docker | 6379 |
 
+## aaPanel Compose form
+
+Paste-ready fields (Compose Name / YAML / `.env` / Notes) for the aaPanel Docker Compose UI: [`aapanel/FORM.md`](aapanel/FORM.md).
+
+Project name `ostadbank` → `/www/dk_project/ostadbank`. Clone the repo into that path before Start (builds need `backend/`, `frontend/`, `docs/`).
+
 ## aaPanel one-line install
 
 Requires Docker + Compose on the server (aaPanel → App Store → Docker).

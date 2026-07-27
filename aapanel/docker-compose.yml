@@ -1,0 +1,148 @@
+# aaPanel Docker Compose — OstadBank / UniBank
+# Place this as docker-compose.yml inside /www/dk_project/ostadbank
+# after cloning: git clone https://github.com/arsalanarghavan/UniBank.git /www/dk_project/ostadbank
+# Then copy aapanel/docker-compose.yml → docker-compose.yml and aapanel/.env.example → .env
+# (or paste from aapanel/FORM.md into the aaPanel UI)
+
+services:
+  db:
+    image: mariadb:10.11
+    container_name: ostadbank_db
+    restart: unless-stopped
+    command:
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootsecret}
+      MYSQL_DATABASE: ${DB_DATABASE:-ostadbank}
+      MYSQL_USER: ${DB_USERNAME:-ostadbank}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+    networks:
+      - ostadbank_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: ostadbank_redis
+    restart: unless-stopped
+    networks:
+      - ostadbank_net
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ostadbank_api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      APP_URL: ${API_URL:-http://localhost:8000}
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-ostadbank}
+      DB_USERNAME: ${DB_USERNAME:-ostadbank}
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      SESSION_DRIVER: ${SESSION_DRIVER:-redis}
+      QUEUE_CONNECTION: ${QUEUE_CONNECTION:-redis}
+      CACHE_STORE: ${CACHE_STORE:-redis}
+      SANCTUM_STATEFUL_DOMAINS: ${SANCTUM_STATEFUL_DOMAINS:-localhost:3000,localhost}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "${API_PORT:-8000}:80"
+    networks:
+      - ostadbank_net
+
+  queue:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ostadbank_queue
+    restart: unless-stopped
+    command: php artisan queue:work --sleep=1 --tries=3 --max-time=3600
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_DATABASE: ${DB_DATABASE:-ostadbank}
+      DB_USERNAME: ${DB_USERNAME:-ostadbank}
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
+      REDIS_HOST: redis
+      QUEUE_CONNECTION: ${QUEUE_CONNECTION:-redis}
+      CACHE_STORE: ${CACHE_STORE:-redis}
+    depends_on:
+      - api
+      - redis
+    networks:
+      - ostadbank_net
+
+  scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ostadbank_scheduler
+    restart: unless-stopped
+    command: php artisan schedule:work
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_DATABASE: ${DB_DATABASE:-ostadbank}
+      DB_USERNAME: ${DB_USERNAME:-ostadbank}
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
+      REDIS_HOST: redis
+    depends_on:
+      - api
+    networks:
+      - ostadbank_net
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    container_name: ostadbank_web
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      API_INTERNAL_URL: ${API_INTERNAL_URL:-http://api}
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      - api
+    networks:
+      - ostadbank_net
+
+  docs:
+    build:
+      context: ./docs
+      dockerfile: Dockerfile
+    container_name: ostadbank_docs
+    restart: unless-stopped
+    ports:
+      - "${DOCS_PORT:-3001}:3000"
+    networks:
+      - ostadbank_net
+
+volumes:
+  mariadb_data:
+
+networks:
+  ostadbank_net:
+    driver: bridge

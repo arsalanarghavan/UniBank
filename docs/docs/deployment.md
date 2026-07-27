@@ -4,6 +4,10 @@ sidebar_position: 3
 
 # Deployment
 
+## aaPanel Compose form
+
+If you prefer the aaPanel Docker Compose UI instead of the one-liner, use the paste-ready fields in [`aapanel/FORM.md`](https://github.com/arsalanarghavan/UniBank/blob/main/aapanel/FORM.md) (Compose Name `ostadbank`, YAML, `.env`, Notes). Clone the repo into `/www/dk_project/ostadbank` before starting so `build: ./backend|frontend|docs` can find the source. Reference files: `aapanel/docker-compose.yml` and `aapanel/.env.example`.
+
 ## aaPanel (one-line)
 
 On a server with Docker (aaPanel App Store → Docker):
